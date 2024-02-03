@@ -1,49 +1,74 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+""" Составить программу с использованием классов и объектов для решения задачи. Во всех
+заданиях, помимо указанных в задании операций, обязательно должны быть реализованы
+следующие методы:
+метод инициализации __init__ ;
+ввод с клавиатуры read ;
+вывод на экран display .
+Номер варианта необходимо уточнить у преподавателя. В раздел программы, начинающийся
+после инструкции if __name__ = '__main__': добавить код, демонстрирующий возможности
+разработанного класса.
+---------------------------------------------------------------------------------------------------------------------
+Реализовать класс Cursor. Полями являются координаты курсора по горизон тали и
+вертикали — целые положительные числа, вид курсора — горизонталь ный или
+вертикальный, размер курсора — целое от 1 до 15 Реализовать мето ды изменения
+координат курсора, изменения вида курсора, изменения размера курсора, метод гашения и
+восстановления курсора."""
 
 
-class Bancomat:
-    def __init__(self, number, maxs, mins):
-        self.banknotes = {"10": 0, "100": 0, "500": 0, "1000": 0}
-        self.number = number
-        self.maxs = maxs
-        self.mins = mins
+class Cursor:
+    def __init__(self, x=0, y=0, orientation='horizontal', size=1):
+        self.x = max(0, x)  # координата по горизонтали
+        self.y = max(0, y)  # координата по вертикали
+        self.orientation = orientation  # вид курсора: 'horizontal' или 'vertical'
+        self.size = max(1, min(15, size))  # размер курсора от 1 до 15
+        self.is_visible = True  # видимость курсора
 
-    @property
-    def total_sum(self):
-        total = 0
-        for nominals, count in self.banknotes.items():
-            total += int(nominals) * count
-        return total
+    def read(self):
+        self.x = int(input("Введите координату X: "))
+        self.y = int(input("Введите координату Y: "))
+        self.orientation = input("Введите ориентацию курсора (horizontal/vertical): ")
+        self.size = int(input("Введите размер курсора (от 1 до 15): "))
+        self.validate()
 
-    def load_money(self, taple):
-        for nominal, count in taple.items():
-            self.banknotes[nominal] += count
-        print("Остаток в банкомате: ", self.total_sum)
+    def display(self):
+        print(f"Координаты курсора: ({self.x}, {self.y}), Ориентация: {self.orientation}, Размер: {self.size}, Видимость: {'Видимый' if self.is_visible else 'Скрытый'}")
 
-    def get_money(self, sum_tuple):
-        if (
-            self.total_sum >= self.check_sum(sum_tuple) >= self.mins
-            and self.check_sum(sum_tuple) <= self.maxs
-        ):
-            for nominal, count in sum_tuple.items():
-                self.banknotes[nominal] -= count
-            print("Остаток в банкомате:", self.total_sum)
+    def change_orientation(self):
+        if self.orientation == 'horizontal':
+            self.orientation = 'vertical'
         else:
-            print("Error!")
+            self.orientation = 'horizontal'
 
-    def check_sum(self, tuple):
-        total = 0
-        for nominals, count in tuple.items():
-            total += int(nominals) * count
-        return total
+    def change_size(self, new_size):
+        self.size = max(1, min(15, new_size))
 
+    def toggle_visibility(self):
+        self.is_visible = not self.is_visible
 
-if __name__ == "__main__":
-    obj = Bancomat("123", 1000, 100)
-    summ = {"10": 1, "1000": 1, "500": 20}
-    obj.load_money(summ)
-    print(obj.banknotes)
-    summ = {"10": 1, "1000": 0, "500": 1}
-    obj.get_money(summ)
-    print(obj.banknotes)
+    def validate(self):
+        if self.orientation not in ['horizontal', 'vertical']:
+            raise ValueError("Ориентация курсора должна быть 'horizontal' или 'vertical'")
+        self.size = max(1, min(15, self.size))
+
+if __name__ == '__main__':
+    cursor = Cursor()
+    cursor.read()
+    cursor.display()
+
+    # Изменение ориентации курсора
+    cursor.change_orientation()
+    print("\nПосле изменения ориентации:")
+    cursor.display()
+
+    # Изменение размера курсора
+    new_size = int(input("\nВведите новый размер курсора: "))
+    cursor.change_size(new_size)
+    print("После изменения размера:")
+    cursor.display()
+
+    # Переключение видимости курсора
+    cursor.toggle_visibility()
+    print("После переключения видимости:")
+    cursor.display()

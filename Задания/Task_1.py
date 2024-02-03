@@ -1,59 +1,70 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+"""Парой называется класс с двумя полями, которые обычно имею т имена first и second. Требуется
+реализовать тип данных с помощью такого класса. Во всех заданиях обязательно должны
+присутствовать:
+метод инициализации __init__ ; метод должен контролировать значения аргумен тов на
+корректность;
+ввод с клавиатуры read ;
+вывод на экран display .
+Реализовать внешнюю функцию с именем make_тип() , где тип — тип реализуе мой структуры.
+Функция должна получать в качестве аргументов значения для полей структуры и возвращать
+структуру требуемого типа. При передаче оши бочных параметров следует выводить сообщение
+и заканчивать работу.
+Номер варианта необходимо уточнить у преподавателя. В раздел программы, начинающийся
+после инструкции if __name__ = '__main__': добавить код, демонстрирующий возможности
+разработанного класса.
+Поле first — целое число, целая часть числа; поле second — положительное целое число,
+дробная часть числа. Реализовать метод multiply() — умножение на произвольное целое
+число типа int. Метод должен правильно работать при любых допустимых значениях first и
+second."""
 
 class Pair:
-    """
-    Класс, хранящий введенные коэффициенты A и B в полях first и second
-    """
+    def __init__(self, first=0, second=0):
+        self.first = int(first)
+        self.second = int(second)
 
-    def __init__(self, first, second):
-        """
-        Конструктор класса, принимает два параметра, валидирует их и сохраняет в поля
-        """
-        # Проверка, является ли first(A) дробным числом
-        if not isinstance(first, float):
-            raise TypeError("Значение first должно быть дробным числом")
+        if self.second < 0:
+            raise ValueError("Значение 'second' должно быть положительным.")
 
-        # Проверка, является ли second(B) дробным числом
-        if not isinstance(second, float):
-            raise TypeError("Значение second должно быть дробным числом")
+    def read(self, prompt=None):
+        line = input(
+            "Введите целую и дробную часть числа через запятую (например, '5, 99'): ") if prompt is None else input(
+            prompt)
+        parts = list(map(int, line.split(',', maxsplit=1)))
 
-        # Проверка, не равен ли second(A) нулю
-        if first == 0:
-            raise ValueError("Параметр A не должен быть равен нулю")
+        if parts[1] < 0:
+            raise ValueError("Дробная часть числа должна быть положительным числом.")
 
-        # Записываем значения в поля
-        self.first = first
-        self.second = second
-
-    def sol_lin_equ(self):
-        """
-        Вычисляется значение линейного уравнения, с использованием переданных в конструктор параметров
-        """
-        return (self.second * -1.0) / self.first
+        self.first, self.second = parts
 
     def display(self):
-        """
-        Метод выводит на консоль линейное уравнение вида Ax+B с подставленными параметрами
-        """
-        print(f"(y = {self.first}x + {self.second})")
+        print(f"Число: {self.first}.{self.second}")
 
-    @classmethod
-    def read(cls):
+    def multiply(self, multiplier):
+        # Умножение числа с учетом дробной части
+        full_number = float(f"{self.first}.{self.second}")
+        result = full_number * multiplier
+        self.first, self.second = map(int, str(result).split('.'))
+
+    @staticmethod
+    def make_pair(first, second):
         """
-        Статичный метод для создания экземпляра класса
+        Статическая функция создания экземпляра класса Pair
         """
-        a = float(input("Введите коэффициент A: "))
-        b = float(input("Введите коэффициент B: "))
-
-        return cls(a, b)
+        return Pair(first, second)
 
 
-if __name__ == "__main__":
-    # Создаем экземпляр класса
-    pair = Pair.read()
-    # Отображаем уравнение
-    pair.display()
-    # Выводим посчитанное результат вычисления
-    print(pair.sol_lin_equ())
+if __name__ == '__main__':
+    print("Создаем число:")
+    number = Pair.make_pair(5, 99)
+    number.display()
+
+    print("\nВведите число для создания:")
+    number.read()
+    number.display()
+
+    multiplier = int(input("Введите множитель: "))
+    number.multiply(multiplier)
+    print(f"Результат умножения:")
+    number.display()
